@@ -3,6 +3,10 @@ project(accxx
   VERSION 1.0.0
   LANGUAGES CXX)
 
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
+
+# dependencies
+
 include(CheckLanguage)
 check_language(CUDA)
 find_package(OpenCL)
@@ -29,6 +33,8 @@ if (NOT OpenCL_FOUND)
   message(STATUS "No OpenCL support")
 endif()
 
+# targets and properties
+
 add_subdirectory(src)
 
 if(CMAKE_CUDA_COMPILER)
@@ -38,20 +44,67 @@ if(CMAKE_CUDA_COMPILER)
   set(SOURCE_FILES ${SOURCE_FILES} ${CUDA_SOURCE_FILES})
 endif()
 
-add_library(accxx ${SOURCE_FILES})
+add_library(accxx SHARED ${SOURCE_FILES})
+add_library(accxx::accxx ALIAS accxx)
 target_include_directories(accxx
   PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_compile_features(accxx PUBLIC cxx_std_14)
+target_compile_features(accxx PRIVATE cxx_std_14)
+target_compile_options(accxx PRIVATE
+  $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+    -Wall -Wextra -Wpedantic>)
 if(OpenCL_FOUND)
   target_link_libraries(accxx PUBLIC OpenCL::OpenCL)
 endif()
-add_library(accxx::accxx ALIAS accxx)
+
+# installation
+
+include(GNUInstallDirs)
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/accxx)
+
+install(TARGETS accxx
+  EXPORT accxx-targets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(EXPORT accxx-targets
+  FILE
+    accxx.cmake
+  NAMESPACE
+    accxx::
+  DESTINATION
+    ${INSTALL_CONFIGDIR})
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/accxxConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+
+configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/accxxConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/accxxConfig.cmake
+  INSTALL_DESTINATION ${INSTALL_CONFIGDIR})
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/accxxConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/accxxConfigVersion.cmake
+  DESTINATION ${INSTALL_CONFIGDIR})
+
+# exporting
+
+export(EXPORT accxx-targets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/accxxTargets.cmake
+    NAMESPACE accxx::)
+
+export(PACKAGE accxx)
 
 # documentation
+
 find_package(Doxygen)
 option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
 
@@ -75,6 +128,7 @@ if(BUILD_DOCUMENTATION)
 endif()
 
 # testing
+
 include(CTest)
 enable_testing()
 add_subdirectory(test)
