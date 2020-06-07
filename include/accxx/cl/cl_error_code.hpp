@@ -26,7 +26,7 @@ public:
   constexpr cl_error_code(cl_int code) noexcept : m_code{code}
   {}
 
-  constexpr cl_int* operator&() noexcept
+  cl_int* operator&() noexcept
   {
     return &m_code;
   }

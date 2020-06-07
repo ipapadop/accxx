@@ -25,7 +25,7 @@ struct cuda_error_category_t : std::error_category
   }
 };
 
-const cuda_error_category_t cuda_error_category;
+const cuda_error_category_t cuda_error_category{};
 
 } // anonymous namespace
 
