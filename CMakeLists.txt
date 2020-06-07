@@ -5,39 +5,43 @@ project(accxx
 
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
-# dependencies
+# options
 
-include(CheckLanguage)
-check_language(CUDA)
-find_package(OpenCL)
+option(ACCXX_WITH_CUDA "Compile with CUDA supprot" ON)
+option(ACCXX_WITH_OPENCL "Compile with OpenCL supprot" ON)
+
+# dependencies
 
 add_subdirectory(external)
 
-if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-  set(CMAKE_CXX_STANDARD_REQUIRED True)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
-
-if(CMAKE_CUDA_COMPILER)
-  project(accxx LANGUAGES CUDA)
-  if(NOT DEFINED CMAKE_CUDA_STANDARD)
-    set(CMAKE_CUDA_STANDARD 14)
-    set(CMAKE_CUDA_STANDARD_REQUIRED True)
+if(ACCXX_WITH_CUDA)
+  include(CheckLanguage)
+  check_language(CUDA)
+  if(CMAKE_CUDA_HOST_COMPILER)
+    enable_language(CUDA)
+    if(NOT DEFINED CMAKE_CUDA_STANDARD)
+      set(CMAKE_CUDA_STANDARD 14)
+      set(CMAKE_CUDA_STANDARD_REQUIRED True)
+    endif()
+  else()
+    message(STATUS "No CUDA support")
+    unset(ACCXX_WITH_CUDA CACHE)
   endif()
-else()
-  message(STATUS "No CUDA support")
 endif()
 
-if (NOT OpenCL_FOUND)
-  message(STATUS "No OpenCL support")
+if(ACCXX_WITH_OPENCL)
+  find_package(OpenCL)
+  if (NOT OpenCL_FOUND)
+    message(STATUS "No OpenCL support")
+    unset(ACCXX_WITH_OPENCL CACHE)
+  endif()
 endif()
 
 # targets and properties
 
 add_subdirectory(src)
 
-if(CMAKE_CUDA_COMPILER)
+if(ACCXX_WITH_CUDA)
   set_source_files_properties(${CUDA_SOURCE_FILES}
     PROPERTIES
       LANGUAGE CUDA)
@@ -53,10 +57,10 @@ target_include_directories(accxx
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_compile_features(accxx PRIVATE cxx_std_14)
-target_compile_options(accxx PRIVATE
-  $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-    -Wall -Wextra -Wpedantic>)
-if(OpenCL_FOUND)
+#target_compile_options(accxx PRIVATE
+#  $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+#    -Wall -Wextra -Wpedantic>)
+if(ACCXX_WITH_OPENCL)
   target_link_libraries(accxx PUBLIC OpenCL::OpenCL)
 endif()
 
@@ -106,9 +110,9 @@ export(PACKAGE accxx)
 # documentation
 
 find_package(Doxygen)
-option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+option(ACCXX_BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
 
-if(BUILD_DOCUMENTATION)
+if(ACCXX_BUILD_DOCUMENTATION)
     if(NOT DOXYGEN_FOUND)
         message(FATAL_ERROR "Doxygen is needed to build the documentation.")
     endif()
