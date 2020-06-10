@@ -18,7 +18,7 @@ namespace std {
 
 template<>
 struct is_error_code_enum<cudaError_t> : true_type
-{};
+{ };
 
 } // namespace std
 

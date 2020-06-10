@@ -24,7 +24,7 @@ public:
 
   /// Constructs the wrapper with error code @p code.
   constexpr cl_error_code(cl_int code) noexcept : m_code{code}
-  {}
+  { }
 
   cl_int* operator&() noexcept
   {
@@ -36,20 +36,17 @@ public:
     return m_code;
   }
 
-  friend constexpr bool
-  operator==(cl_error_code const& x, cl_error_code const& y) noexcept
+  friend constexpr bool operator==(cl_error_code const& x, cl_error_code const& y) noexcept
   {
     return x.m_code == y.m_code;
   }
 
-  friend constexpr bool
-  operator!=(cl_error_code const& x, cl_error_code const& y) noexcept
+  friend constexpr bool operator!=(cl_error_code const& x, cl_error_code const& y) noexcept
   {
     return !(x == y);
   }
 
-  friend constexpr bool
-  operator<(cl_error_code const& x, cl_error_code const& y) noexcept
+  friend constexpr bool operator<(cl_error_code const& x, cl_error_code const& y) noexcept
   {
     return x.m_code < y.m_code;
   }
@@ -64,8 +61,7 @@ public:
     return !(x == y);
   }
 
-  friend constexpr bool
-  operator<(int x, cl_error_code const& y) noexcept
+  friend constexpr bool operator<(int x, cl_error_code const& y) noexcept
   {
     return x < y.m_code;
   }
@@ -80,8 +76,7 @@ public:
     return !(x == y);
   }
 
-  friend constexpr bool
-  operator<(cl_error_code const& x, int y) noexcept
+  friend constexpr bool operator<(cl_error_code const& x, int y) noexcept
   {
     return x.m_code < y;
   }

@@ -18,7 +18,7 @@ namespace std {
 
 template<>
 struct is_error_code_enum<accxx::cl_error_code> : true_type
-{};
+{ };
 
 } // namespace std
 

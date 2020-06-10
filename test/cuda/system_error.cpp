@@ -12,14 +12,14 @@
 
 #include "accxx/cuda/system_error.hpp"
 
-TEST_CASE("CUDA error creation", "[error-code-cuda-create]")
+TEST_CASE("CUDA error creation", "[cuda-error-code-create]")
 {
   std::error_code code = cudaSuccess;
   REQUIRE(code == cudaSuccess);
   REQUIRE(code.value() == cudaSuccess);
 }
 
-TEST_CASE("CUDA error category", "[error-category-cuda]")
+TEST_CASE("CUDA error category", "[cuda-error-category]")
 {
   std::error_code code = cudaSuccess;
   REQUIRE(std::string(code.category().name()) == "cudaError");
