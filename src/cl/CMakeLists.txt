@@ -1,5 +1,6 @@
 set(SOURCE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/cl_error_code.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/error_handler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/system_error.cpp)
 
 set(SOURCE_FILES ${SOURCE_FILES} PARENT_SCOPE)

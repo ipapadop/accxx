@@ -10,6 +10,8 @@
 #ifndef ACCXX_CUDA_CALL_HPP
 #define ACCXX_CUDA_CALL_HPP
 
+#include <cuda_runtime_api.h>
+
 #include "accxx/cuda/error_handler.hpp"
 #include "accxx/cuda/system_error.hpp"
 

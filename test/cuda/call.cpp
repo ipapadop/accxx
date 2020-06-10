@@ -8,7 +8,6 @@
 
 #include <catch2/catch.hpp>
 #include <cuda_runtime_api.h>
-#include <stdexcept>
 
 #include "accxx/cuda/call.hpp"
 
@@ -17,11 +16,13 @@ namespace {
 struct test_cuda_call_fixture
 {
   accxx::error_handler m_old_handler{};
-  bool success{true};
+  bool failed{false};
 
   test_cuda_call_fixture() noexcept :
-    m_old_handler{accxx::set_cuda_error_handler(
-      [&](std::error_code code) { success = code.value() == cudaSuccess; })}
+    m_old_handler{accxx::set_cuda_error_handler([&](std::error_code code) {
+      REQUIRE(code.value() != cudaSuccess);
+      failed = true;
+    })}
   { }
 
   test_cuda_call_fixture(test_cuda_call_fixture const&) = delete;
@@ -43,7 +44,7 @@ TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call success", "[cuda-call-succes
   int device_id{-1};
   ACCXX_CUDA_CALL(cudaGetDevice(&device_id));
   REQUIRE(device_id > -1);
-  REQUIRE(success == true);
+  REQUIRE(failed == false);
 }
 
 TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call fail", "[cuda-call-fail]")
@@ -51,8 +52,8 @@ TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call fail", "[cuda-call-fail]")
   int device_id{-1};
   ACCXX_CUDA_CALL(cudaGetDevice(&device_id));
   CHECK(device_id > -1);
-  CHECK(success == true);
+  REQUIRE(failed == false);
 
   ACCXX_CUDA_CALL(cudaSetDevice(device_id + 1));
-  CHECK(success != true);
+  REQUIRE(failed == true);
 }

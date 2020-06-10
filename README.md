@@ -7,16 +7,25 @@ This library is a collection of tools for integrating CUDA and OpenCL code as se
 
 ## Features
 
-- OpenCL error code to string conversion (`accxx/cl/cl_error_code.hpp`)
-- Support for transforming CUDA and OpenCL error codes to [`std::error_code`](https://en.cppreference.com/w/cpp/error/error_code) (`accxx/cuda/system_error.hpp`, `accxx/cl/system_error.hpp`)
+### CUDA
+
+- RAII device switch (`accxx/cuda/cuda_device_guard.hpp`)
+- Checked CUDA calls (`accxx/cuda/call.hpp`) with associated error handlers (`accxx/cuda/error_handler.hpp`)
+- Support for transforming CUDA error codes to [`std::error_code`](https://en.cppreference.com/w/cpp/error/error_code) (`accxx/cuda/system_error.hpp`)
+
+### OpenCL
+
+- Error code to string conversion (`accxx/cl/cl_error_code.hpp`)
+- Checked OpenCL calls (`accxx/cl/call.hpp`) with associated error handlers (`accxx/cl/error_handler.hpp`)
+- Support for transforming OpenCL error codes to [`std::error_code`](https://en.cppreference.com/w/cpp/error/error_code) (`accxx/cl/system_error.hpp`)
 
 ## Build
 
 accxx has been tested with [CMake](https://cmake.org/) 3.17, but theoretically 3.8 and higher is supported.
 
-If you need to compile with OpenCL, then you will need OpenCL headers and an OpenCL library.
-
 If you need to compile with CUDA, then you will need to have [CUDA](https://developer.nvidia.com/cuda-downloads) installed.
+
+If you need to compile with OpenCL, then you will need OpenCL headers and an OpenCL library.
 
 You can build with
 

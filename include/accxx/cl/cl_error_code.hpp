@@ -10,7 +10,7 @@
 #ifndef ACCXX_CL_ERROR_CODE_HPP
 #define ACCXX_CL_ERROR_CODE_HPP
 
-#include <CL/opencl.h>
+#include <CL/cl.h>
 
 namespace accxx {
 
