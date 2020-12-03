@@ -8,4 +8,4 @@ if(NOT TARGET accxx::accxx)
     include("${ACCXX_CMAKE_DIR}/accxxTargets.cmake")
 endif()
 
-set(ACCXX_lIBRARIES accxx::accxx)
+set(ACCXX_LIBRARIES accxx::accxx)

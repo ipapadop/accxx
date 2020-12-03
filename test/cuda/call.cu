@@ -37,23 +37,44 @@ struct test_cuda_call_fixture
   test_cuda_call_fixture& operator=(test_cuda_call_fixture&&) = delete;
 };
 
+//__global__
+//void dummy()
+//{}
+
 } // namespace
 
-TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call success", "[cuda-call-success]")
+TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call host function success", "[cuda-call-host-success]")
 {
   int device_id{-1};
   ACCXX_CUDA_CALL(cudaGetDevice(&device_id));
   REQUIRE(device_id > -1);
   REQUIRE(failed == false);
+  REQUIRE(cudaGetLastError() == cudaSuccess);
 }
 
-TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call fail", "[cuda-call-fail]")
+TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call host function fail", "[cuda-call-host--fail]")
 {
   int device_id{-1};
   ACCXX_CUDA_CALL(cudaGetDevice(&device_id));
   CHECK(device_id > -1);
   REQUIRE(failed == false);
+  REQUIRE(cudaGetLastError() == cudaSuccess);
 
   ACCXX_CUDA_CALL(cudaSetDevice(device_id + 1));
   REQUIRE(failed == true);
+  REQUIRE(cudaGetLastError() == cudaSuccess);
+}
+
+TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call kernel success", "[cuda-call-kernel-success]")
+{
+  //ACCXX_CUDA_CALL(dummy<<<1, 1>>>());
+  REQUIRE(failed == false);
+  REQUIRE(cudaGetLastError() == cudaSuccess);
+}
+
+TEST_CASE_METHOD(test_cuda_call_fixture, "CUDA call kernel fail", "[cuda-call-kernel-fail]")
+{
+  //ACCXX_CUDA_CALL(dummy<<<10000, 1>>>());
+  REQUIRE(failed == true);
+  REQUIRE(cudaGetLastError() == cudaSuccess);
 }

@@ -67,3 +67,7 @@ Distributed under the terms of the MIT License.
 
 (See accompanying file LICENSE or copy at http://opensource.org/licenses/MIT)
 ```
+
+## Related Work
+
+- [Your own error condition](https://akrzemi1.wordpress.com/2017/08/12/your-own-error-condition/)

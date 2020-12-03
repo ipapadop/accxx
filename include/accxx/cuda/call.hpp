@@ -24,6 +24,7 @@
     auto status = (__VA_ARGS__);                                  \
     if (status != cudaSuccess)                                    \
     {                                                             \
+      cudaGetLastError();                                         \
       ::accxx::get_cuda_error_handler()(make_error_code(status)); \
     }                                                             \
   } while (false)
@@ -38,6 +39,7 @@
     auto status = (__VA_ARGS__);                                           \
     if (status != cudaSuccess)                                             \
     {                                                                      \
+      cudaGetLastError();                                                  \
       ::accxx::get_noexcept_cuda_error_handler()(make_error_code(status)); \
     }                                                                      \
   } while (false)

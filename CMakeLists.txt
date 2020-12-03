@@ -61,6 +61,7 @@ target_compile_features(accxx PRIVATE cxx_std_14)
 #  $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
 #    -Wall -Wextra -Wpedantic>)
 if(ACCXX_WITH_OPENCL)
+  target_compile_definitions(accxx PUBLIC CL_TARGET_OPENCL_VERSION=120)
   target_link_libraries(accxx PUBLIC OpenCL::OpenCL)
 endif()
 
@@ -133,6 +134,10 @@ endif()
 
 # testing
 
-include(CTest)
-enable_testing()
-add_subdirectory(test)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  include(CTest)
+endif()
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+  add_subdirectory(test)
+endif()

@@ -1,5 +1,5 @@
 set(SOURCES
-  call.cpp
+  call.cu
   cuda_device_guard.cpp
   error_handler.cpp
   main.cpp
