@@ -21,10 +21,10 @@
 #define ACCXX_CUDA_CALL(...)                                      \
   do                                                              \
   {                                                               \
-    auto status = (__VA_ARGS__);                                  \
+    (__VA_ARGS__);                                                \
+    auto status = cudaGetLastError();                             \
     if (status != cudaSuccess)                                    \
     {                                                             \
-      cudaGetLastError();                                         \
       ::accxx::get_cuda_error_handler()(make_error_code(status)); \
     }                                                             \
   } while (false)
